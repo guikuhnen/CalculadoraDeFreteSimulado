@@ -1,4 +1,6 @@
 using CalculadoraDeFreteSimulado.API.Context;
+using CalculadoraDeFreteSimulado.API.Contracts;
+using CalculadoraDeFreteSimulado.API.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +21,8 @@ namespace CalculadoraDeFreteSimulado.API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            #region Context
+
             // Foram utilizados 3 contextos separados para simular as bases/servicos diferentes que o programa acessaria/consumiria
 
             services.AddDbContext<CalculoFreteContext>(opt =>
@@ -29,6 +33,14 @@ namespace CalculadoraDeFreteSimulado.API
 
             services.AddDbContext<EmbarqueContext>(opt =>
                 opt.UseInMemoryDatabase("EmbarqueContext"));
+
+            #endregion
+
+            #region Repositories
+
+            services.AddScoped<ICalculoFreteRepository, CalculoFreteRepository>();
+
+            #endregion
 
             services.AddControllers();
         }

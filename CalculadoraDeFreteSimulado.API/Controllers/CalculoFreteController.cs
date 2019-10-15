@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CalculadoraDeFreteSimulado.API.Context;
+﻿using CalculadoraDeFreteSimulado.API.Contracts;
 using CalculadoraDeFreteSimulado.API.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace CalculadoraDeFreteSimulado.API.Controllers
 {
@@ -12,30 +9,18 @@ namespace CalculadoraDeFreteSimulado.API.Controllers
     [ApiController]
     public class CalculoFreteController : ControllerBase
     {
-        private readonly CalculoFreteContext _calculoFreteContext;
-        private readonly EmbarqueContext _embarqueContext;
-        private readonly NegociacaoFreteContext _negociacaoFreteContext;
+        private readonly ICalculoFreteRepository _calculoFreteRepository;
 
-        public CalculoFreteController(CalculoFreteContext calculoFreteContext, EmbarqueContext embarqueContext, 
-            NegociacaoFreteContext negociacaoFreteContext)
+        public CalculoFreteController(ICalculoFreteRepository calculoFreteRepository)
         {
-            _calculoFreteContext = calculoFreteContext;
-            _embarqueContext = embarqueContext;
-            _negociacaoFreteContext = negociacaoFreteContext;
+            _calculoFreteRepository = calculoFreteRepository;
         }
-
-        // GET: api/CalculoFrete
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CalculoFrete>>> GetCalculosFretes()
+        
+        // GET: CalculoFrete/1
+        [HttpGet("{codigo}")]
+        public async Task<ActionResult<CalculoFrete>> GetCalculoFrete(long codigo)
         {
-            return await _calculoFreteContext.CalculosFretes.ToListAsync();
-        }
-
-        // GET: api/CalculoFrete/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CalculoFrete>> GetCalculoFrete(long id)
-        {
-            var calculoFrete = await _calculoFreteContext.CalculosFretes.FindAsync(id);
+            var calculoFrete = await _calculoFreteRepository.ObterMelhorNegociacao(codigo);
 
             if (calculoFrete == null)
             {
@@ -45,69 +30,70 @@ namespace CalculadoraDeFreteSimulado.API.Controllers
             return calculoFrete;
         }
 
-        // PUT: api/CalculoFrete/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCalculoFrete(long id, CalculoFrete calculoFrete)
-        {
-            if (id != calculoFrete.Id)
-            {
-                return BadRequest();
-            }
+    //    // PUT: api/CalculoFrete/5
+    //    // To protect from overposting attacks, please enable the specific properties you want to bind to, for
+    //    // more details see https://aka.ms/RazorPagesCRUD.
+    //    [HttpPut("{id}")]
+    //    public async Task<IActionResult> PutCalculoFrete(long id, CalculoFrete calculoFrete)
+    //    {
+    //        if (id != calculoFrete.Id)
+    //        {
+    //            return BadRequest();
+    //        }
 
-            _calculoFreteContext.Entry(calculoFrete).State = EntityState.Modified;
+    //        _calculoFreteContext.Entry(calculoFrete).State = EntityState.Modified;
 
-            try
-            {
-                await _calculoFreteContext.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CalculoFreteExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+    //        try
+    //        {
+    //            await _calculoFreteContext.SaveChangesAsync();
+    //        }
+    //        catch (DbUpdateConcurrencyException)
+    //        {
+    //            if (!CalculoFreteExists(id))
+    //            {
+    //                return NotFound();
+    //            }
+    //            else
+    //            {
+    //                throw;
+    //            }
+    //        }
 
-            return NoContent();
-        }
+    //        return NoContent();
+    //    }
 
-        // POST: api/CalculoFrete
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPost]
-        public async Task<ActionResult<CalculoFrete>> PostCalculoFrete(CalculoFrete calculoFrete)
-        {
-            _calculoFreteContext.CalculosFretes.Add(calculoFrete);
-            await _calculoFreteContext.SaveChangesAsync();
+    //    // POST: api/CalculoFrete
+    //    // To protect from overposting attacks, please enable the specific properties you want to bind to, for
+    //    // more details see https://aka.ms/RazorPagesCRUD.
+    //    [HttpPost]
+    //    public async Task<ActionResult<CalculoFrete>> PostCalculoFrete(CalculoFrete calculoFrete)
+    //    {
+    //        _calculoFreteContext.CalculosFretes.Add(calculoFrete);
+    //        await _calculoFreteContext.SaveChangesAsync();
 
-            return CreatedAtAction("GetCalculoFrete", new { id = calculoFrete.Id }, calculoFrete);
-        }
+    //        return CreatedAtAction("GetCalculoFrete", new { id = calculoFrete.Id }, calculoFrete);
+    //    }
 
-        // DELETE: api/CalculoFrete/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<CalculoFrete>> DeleteCalculoFrete(long id)
-        {
-            var calculoFrete = await _calculoFreteContext.CalculosFretes.FindAsync(id);
-            if (calculoFrete == null)
-            {
-                return NotFound();
-            }
+    //    // DELETE: api/CalculoFrete/5
+    //    [HttpDelete("{id}")]
+    //    public async Task<ActionResult<CalculoFrete>> DeleteCalculoFrete(long id)
+    //    {
+    //        var calculoFrete = await _calculoFreteContext.CalculosFretes.FindAsync(id);
+    //        if (calculoFrete == null)
+    //        {
+    //            return NotFound();
+    //        }
 
-            _calculoFreteContext.CalculosFretes.Remove(calculoFrete);
-            await _calculoFreteContext.SaveChangesAsync();
+    //        _calculoFreteContext.CalculosFretes.Remove(calculoFrete);
+    //        await _calculoFreteContext.SaveChangesAsync();
 
-            return calculoFrete;
-        }
+    //        return calculoFrete;
+    //    }
 
-        private bool CalculoFreteExists(long id)
-        {
-            return _calculoFreteContext.CalculosFretes.Any(e => e.Id == id);
-        }
+    //    private bool CalculoFreteExists(long id)
+    //    {
+    //        return _calculoFreteContext.CalculosFretes.Any(e => e.Id == id);
+    //    }
+
     }
 }

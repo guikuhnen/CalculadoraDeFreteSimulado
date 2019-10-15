@@ -1,21 +1,31 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CalculadoraDeFreteSimulado.API.Models
 {
+    [Table("Embarque")]
     public class Embarque : ModelBase
     {
+        [Required(ErrorMessage = "Para um embarque e necessario que uma Embarcadora esteja vinculada.")]
         public Embarcadora Embarcadora { get; set; }
 
+        [Required(ErrorMessage = "A origem e obrigatoria.")]
         public string Origem { get; set; }
 
+        [Required(ErrorMessage = "O destino e obrigatorio.")]
         public string Destino { get; set; }
 
+        [Required(ErrorMessage = "A quilometragem e obrigatoria.")]
         public double Quilometragem { get; set; }
 
+        [Required(ErrorMessage = "A categoria do veiculo e obrigatoria.")]
         public CategoriaVeiculoEnum CategoriaVeiculo { get; set; }
 
+        [Required(ErrorMessage = "O peso e obrigatorio.")]
         public double Peso { get; set; }
 
+        [Required(ErrorMessage = "A data da coleta e obrigatoria.")]
         public DateTime DataColeta { get; set; }
 
         public Embarque() : base (0)
