@@ -5,8 +5,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CalculadoraDeFreteSimulado.API.Models
 {
     [Table("CalculoFrete")]
-    public class CalculoFrete : ModelBase
+    public class CalculoFrete
     {
+        [Key]
+        public long Id { get; set; }
+
         [Required(ErrorMessage = "Para calcular a melhor negociacao e necessario que uma Embarcadora esteja vinculada.")]
         public Embarcadora Embarcadora { get; set; }
 
@@ -25,12 +28,12 @@ namespace CalculadoraDeFreteSimulado.API.Models
         [Required(ErrorMessage = "A data prevista de entrega e obrigatoria.")]
         public DateTime DataPrevisaoEntrega { get; set; }
 
-        public CalculoFrete() : base (0)
+        public CalculoFrete()
         {
         }
 
-        public CalculoFrete(long codigo, Embarcadora embarcadora, Transportadora transportadora, Embarque embarque, 
-            NegociacaoFrete melhorNegociacaoFrete, double valorCalculado, DateTime dataPrevisaoEntrega) : base(codigo)
+        public CalculoFrete(Embarcadora embarcadora, Transportadora transportadora, Embarque embarque, NegociacaoFrete melhorNegociacaoFrete, 
+            double valorCalculado, DateTime dataPrevisaoEntrega)
         {
             this.Embarcadora = embarcadora;
             this.Transportadora = transportadora;
