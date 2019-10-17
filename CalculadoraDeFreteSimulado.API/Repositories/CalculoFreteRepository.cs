@@ -68,10 +68,29 @@ namespace CalculadoraDeFreteSimulado.API.Repositories
                         negociacaoFrete, embarque.Quilometragem * negociacaoFrete.PrecoQuilometro,
                         embarque.DataColeta.AddDays(negociacaoFrete.PrazoEntregaDias));
 
-                    _calculoFreteContext.Entry(calculoFreteResultado.Embarcadora).State = EntityState.Added;
-                    _calculoFreteContext.Entry(calculoFreteResultado.Transportadora).State = EntityState.Added;
-                    _calculoFreteContext.Entry(calculoFreteResultado.Embarque).State = EntityState.Added;
-                    _calculoFreteContext.Entry(calculoFreteResultado.MelhorNegociacaoFrete).State = EntityState.Added;
+                    #region Validar estado das entidades
+
+                    EntityState validarEstadoEntidade = _calculoFreteContext.Embarcadoras
+                        .FirstOrDefault(e => e.Id.Equals(calculoFreteResultado.Embarcadora.Id)) == null ?
+                            _calculoFreteContext.Entry(calculoFreteResultado.Embarcadora).State = EntityState.Added : 
+                            _calculoFreteContext.Entry(calculoFreteResultado.Embarcadora).State = EntityState.Detached;
+
+                    validarEstadoEntidade = _calculoFreteContext.Transportadoras
+                        .FirstOrDefault(e => e.Id.Equals(calculoFreteResultado.Transportadora.Id)) == null ?
+                            _calculoFreteContext.Entry(calculoFreteResultado.Transportadora).State = EntityState.Added :
+                            _calculoFreteContext.Entry(calculoFreteResultado.Transportadora).State = EntityState.Detached;
+
+                    validarEstadoEntidade = _calculoFreteContext.Embarques
+                        .FirstOrDefault(e => e.Id.Equals(calculoFreteResultado.Embarque.Id)) == null ?
+                            _calculoFreteContext.Entry(calculoFreteResultado.Embarque).State = EntityState.Added :
+                            _calculoFreteContext.Entry(calculoFreteResultado.Embarque).State = EntityState.Detached;
+
+                    validarEstadoEntidade = _calculoFreteContext.NegociacoesFretes
+                        .FirstOrDefault(e => e.Id.Equals(calculoFreteResultado.MelhorNegociacaoFrete.Id)) == null ?
+                            _calculoFreteContext.Entry(calculoFreteResultado.MelhorNegociacaoFrete).State = EntityState.Added :
+                            _calculoFreteContext.Entry(calculoFreteResultado.MelhorNegociacaoFrete).State = EntityState.Detached;
+
+                    #endregion
 
                     await this.Create(calculoFreteResultado);
 
@@ -88,6 +107,8 @@ namespace CalculadoraDeFreteSimulado.API.Repositories
 
         public async Task Create(CalculoFrete calculoFrete)
         {
+            _calculoFreteContext.Entry(calculoFrete).State = EntityState.Added;
+
             _calculoFreteContext.CalculosFretes.Add(calculoFrete);
             await _calculoFreteContext.SaveChangesAsync();
         }

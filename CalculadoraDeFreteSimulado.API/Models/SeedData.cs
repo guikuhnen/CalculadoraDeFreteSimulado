@@ -46,8 +46,10 @@ namespace CalculadoraDeFreteSimulado.API.Models
 
                 negociacaoFreteContext.NegociacoesFretes.AddRange(
                     new NegociacaoFrete(1, embarcadoras[0], transportadoras[0], 8, 11, 10, CategoriaVeiculoEnum.Carreta, 10),
-                    new NegociacaoFrete(1, embarcadoras[1], transportadoras[1], 13, 15, 20, CategoriaVeiculoEnum.Toco, 18),
-                    new NegociacaoFrete(1, embarcadoras[2], transportadoras[2], 20, 40, 55, CategoriaVeiculoEnum.Van, 22)
+                    new NegociacaoFrete(2, embarcadoras[1], transportadoras[1], 13, 15, 20, CategoriaVeiculoEnum.Toco, 18),
+                    new NegociacaoFrete(3, embarcadoras[2], transportadoras[2], 20, 40, 55, CategoriaVeiculoEnum.Van, 22),
+                    new NegociacaoFrete(4, embarcadoras[0], transportadoras[1], 13, 15, 20, CategoriaVeiculoEnum.Toco, 18),
+                    new NegociacaoFrete(5, embarcadoras[0], transportadoras[2], 8, 11, 10.5, CategoriaVeiculoEnum.Carreta, 9)
                 );
 
                 negociacaoFreteContext.SaveChanges();
@@ -84,7 +86,9 @@ namespace CalculadoraDeFreteSimulado.API.Models
                     new Embarque(2, embarcadoras[1], "Endereco C", "Endereco D", 12.2, CategoriaVeiculoEnum.Truck, 15.5,
                         new DateTime(2019, 10, 25, 08, 00, 00)),
                     new Embarque(3, embarcadoras[2], "Endereco E", "Endereco F", 23.07, CategoriaVeiculoEnum.Van, 38,
-                        new DateTime(2019, 10, 30, 08, 00, 00))
+                        new DateTime(2019, 10, 30, 08, 00, 00)),
+                    new Embarque(4, embarcadoras[0], "Endereco G", "Endereco H", 8, CategoriaVeiculoEnum.Toco, 13,
+                        new DateTime(2019, 10, 21, 08, 00, 00))
                 );
 
                 embarqueContext.SaveChanges();
