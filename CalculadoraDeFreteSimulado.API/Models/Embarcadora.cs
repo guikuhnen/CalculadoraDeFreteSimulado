@@ -15,7 +15,6 @@ namespace CalculadoraDeFreteSimulado.API.Models
 
         public Embarcadora(long codigo, string nome) : base (codigo)
         {
-            this.Codigo = codigo;
             this.Nome = nome;
         }
     }

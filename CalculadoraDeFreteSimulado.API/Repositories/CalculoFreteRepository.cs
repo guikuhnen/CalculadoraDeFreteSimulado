@@ -27,30 +27,58 @@ namespace CalculadoraDeFreteSimulado.API.Repositories
             try
             {
                 Embarque embarque = new Embarque();
-                embarque = await _embarqueContext.Embarques.Where(x => x.Codigo == codigoEmbarque).FirstOrDefaultAsync();
+                embarque = await _embarqueContext.Embarques
+                    .Where(e => e.Codigo == codigoEmbarque)
+                    .Include(e => e.Embarcadora)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
 
                 if (embarque == null)
                     throw new Exception("Nao foi possivel localizar o embarque.");
 
-                NegociacaoFrete negociacaoFrete = new NegociacaoFrete();
-                negociacaoFrete = await _negociacaoFreteContext.NegociacoesFretes
-                    .Where(n => n.Embarcadora.Codigo == embarque.Embarcadora.Codigo
-                        && (n.FaixaPesoInicio <= embarque.Peso && n.FaixaPesoFim >= embarque.Peso)
-                        && n.CategoriaVeiculo == embarque.CategoriaVeiculo)
-                    .OrderBy(n => n.PrecoQuilometro)
-                    .ThenBy(n => n.PrazoEntregaDias)
-                    .FirstOrDefaultAsync();
+                goTo_BuscarCalculoFreteResultado:
+                    CalculoFrete calculoFreteResultado = new CalculoFrete();
+                    calculoFreteResultado = await _calculoFreteContext.CalculosFretes
+                        .Where(c => c.Embarque.Id.Equals(embarque.Id))
+                        .Include(c => c.Embarcadora)
+                        .Include(c => c.Transportadora)
+                        .Include(c => c.Embarque)
+                        .Include(c => c.MelhorNegociacaoFrete)
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync();
 
-                if (negociacaoFrete == null)
-                    throw new Exception("Nao foi possivel localizar uma negociacao de frete.");
-                
-                CalculoFrete calculoFreteResultado = new CalculoFrete(negociacaoFrete.Embarcadora, negociacaoFrete.Transportadora, embarque, 
-                    negociacaoFrete, embarque.Quilometragem * negociacaoFrete.PrecoQuilometro, 
-                    embarque.DataColeta.AddDays(negociacaoFrete.PrazoEntregaDias));                
+                if (calculoFreteResultado == null)
+                {
+                    NegociacaoFrete negociacaoFrete = new NegociacaoFrete();
+                    negociacaoFrete = await _negociacaoFreteContext.NegociacoesFretes
+                        .Where(n => n.Embarcadora.Codigo == embarque.Embarcadora.Codigo
+                            && (n.FaixaPesoEmToneladasInicio <= embarque.PesoEmToneladas && n.FaixaPesoEmToneladasFim >= embarque.PesoEmToneladas)
+                            && n.CategoriaVeiculo == embarque.CategoriaVeiculo)
+                        .OrderBy(n => n.PrecoQuilometro)
+                        .ThenBy(n => n.PrazoEntregaDias)
+                        .Include(n => n.Embarcadora)
+                        .Include(n => n.Transportadora)
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync();
 
-                await this.Create(calculoFreteResultado);
+                    if (negociacaoFrete == null)
+                        throw new Exception("Nao foi possivel localizar uma negociacao de frete.");
 
-                return await this._calculoFreteContext.CalculosFretes.FindAsync(calculoFreteResultado.Id);
+                    calculoFreteResultado = new CalculoFrete(negociacaoFrete.Embarcadora, negociacaoFrete.Transportadora, embarque,
+                        negociacaoFrete, embarque.Quilometragem * negociacaoFrete.PrecoQuilometro,
+                        embarque.DataColeta.AddDays(negociacaoFrete.PrazoEntregaDias));
+
+                    _calculoFreteContext.Entry(calculoFreteResultado.Embarcadora).State = EntityState.Added;
+                    _calculoFreteContext.Entry(calculoFreteResultado.Transportadora).State = EntityState.Added;
+                    _calculoFreteContext.Entry(calculoFreteResultado.Embarque).State = EntityState.Added;
+                    _calculoFreteContext.Entry(calculoFreteResultado.MelhorNegociacaoFrete).State = EntityState.Added;
+
+                    await this.Create(calculoFreteResultado);
+
+                    goto goTo_BuscarCalculoFreteResultado;
+                }
+
+                return calculoFreteResultado;
             }
             catch (Exception e)
             {

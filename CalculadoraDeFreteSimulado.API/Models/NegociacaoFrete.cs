@@ -12,11 +12,11 @@ namespace CalculadoraDeFreteSimulado.API.Models
         [Required(ErrorMessage = "Para uma negociacao de frete e necessario que uma Transportadora esteja vinculada.")]
         public Transportadora Transportadora { get; set; }
 
-        [Required(ErrorMessage = "A faixa de peso inicial e obrigatoria.")]
-        public double FaixaPesoInicio { get; set; }
+        [Required(ErrorMessage = "A faixa de peso em toneladas inicial e obrigatoria.")]
+        public double FaixaPesoEmToneladasInicio { get; set; }
 
-        [Required(ErrorMessage = "A faixa de peso final e obrigatoria.")]
-        public double FaixaPesoFim { get; set; }
+        [Required(ErrorMessage = "A faixa de peso em toneladas final e obrigatoria.")]
+        public double FaixaPesoEmToneladasFim { get; set; }
 
         [Required(ErrorMessage = "O preco por quilometro e obrigatorio.")]
         public double PrecoQuilometro { get; set; }
@@ -31,13 +31,13 @@ namespace CalculadoraDeFreteSimulado.API.Models
         {
         }
 
-        public NegociacaoFrete(long codigo, Embarcadora embarcadora, Transportadora transportadora, double faixaPesoInicio, double faixaPesoFim, 
-            double precoQuilometro, CategoriaVeiculoEnum categoriaVeiculo, double prazoEntregaDias) : base (codigo)
+        public NegociacaoFrete(long codigo, Embarcadora embarcadora, Transportadora transportadora, double faixaPesoEmToneladasInicio, 
+            double faixaPesoEmToneladasFim, double precoQuilometro, CategoriaVeiculoEnum categoriaVeiculo, double prazoEntregaDias) : base (codigo)
         {
             this.Embarcadora = embarcadora;
             this.Transportadora = transportadora;
-            this.FaixaPesoInicio = faixaPesoInicio;
-            this.FaixaPesoFim = faixaPesoFim;
+            this.FaixaPesoEmToneladasInicio = faixaPesoEmToneladasInicio;
+            this.FaixaPesoEmToneladasFim = faixaPesoEmToneladasFim;
             this.PrecoQuilometro = precoQuilometro;
             this.CategoriaVeiculo = categoriaVeiculo;
             this.PrazoEntregaDias = prazoEntregaDias;

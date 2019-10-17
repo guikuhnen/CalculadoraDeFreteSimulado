@@ -22,8 +22,8 @@ namespace CalculadoraDeFreteSimulado.API.Models
         [Required(ErrorMessage = "A categoria do veiculo e obrigatoria.")]
         public CategoriaVeiculoEnum CategoriaVeiculo { get; set; }
 
-        [Required(ErrorMessage = "O peso e obrigatorio.")]
-        public double Peso { get; set; }
+        [Required(ErrorMessage = "O peso em toneladas e obrigatorio.")]
+        public double PesoEmToneladas { get; set; }
 
         [Required(ErrorMessage = "A data da coleta e obrigatoria.")]
         public DateTime DataColeta { get; set; }
@@ -33,14 +33,14 @@ namespace CalculadoraDeFreteSimulado.API.Models
         }
 
         public Embarque(long codigo, Embarcadora embarcadora, string origem, string destino, double quilometragem, CategoriaVeiculoEnum categoria, 
-            double peso, DateTime dataColeta) : base (codigo)
+            double pesoEmToneladas, DateTime dataColeta) : base (codigo)
         {
             this.Embarcadora = embarcadora;
             this.Origem = origem;
             this.Destino = destino;
             this.Quilometragem = quilometragem;
             this.CategoriaVeiculo = categoria;
-            this.Peso = peso;
+            this.PesoEmToneladas = pesoEmToneladas;
             this.DataColeta = dataColeta;
         }
     }
